@@ -1,4 +1,4 @@
-package com.t1tanic.budget.view;
+package com.t1tanic.budget.view.user.dialog;
 
 import com.t1tanic.budget.model.AppUser;
 import com.vaadin.flow.component.button.Button;
