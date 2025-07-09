@@ -1,14 +1,17 @@
 package com.t1tanic.budget.view;
 
+import com.t1tanic.budget.view.category.CategoryView;
 import com.t1tanic.budget.view.user.AppUserView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.router.HighlightConditions;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.component.html.Div;
 
+@Route("dashboard")
 @PageTitle("Dashboard")
 public class DashboardView extends AppLayout {
 
@@ -33,7 +36,10 @@ public class DashboardView extends AppLayout {
         RouterLink usersLink = new RouterLink("App Users", AppUserView.class);
         usersLink.setHighlightCondition(HighlightConditions.sameLocation());
 
-        Nav nav = new Nav(usersLink);
+        RouterLink categoriesLink = new RouterLink("Categories", CategoryView.class);
+        categoriesLink.setHighlightCondition(HighlightConditions.sameLocation());
+
+        Nav nav = new Nav(usersLink, categoriesLink);
         nav.getStyle().set("display", "flex")
                 .set("flex-direction", "column")
                 .set("padding", "1rem");

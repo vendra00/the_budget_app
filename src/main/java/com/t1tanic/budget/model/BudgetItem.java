@@ -1,6 +1,5 @@
 package com.t1tanic.budget.model;
 
-import com.t1tanic.budget.enums.ItemType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -9,12 +8,14 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "item_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class BudgetItem {
+public abstract class BudgetItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +24,6 @@ public class BudgetItem {
     private String description;
 
     private double amount;
-
-    @Enumerated(EnumType.STRING)
-    private ItemType type;
 
     private LocalDate date;
 
@@ -52,4 +50,3 @@ public class BudgetItem {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 }
-
