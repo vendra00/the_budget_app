@@ -16,6 +16,7 @@ public class AppUserForm extends VerticalLayout {
     private final TextField nameField = new TextField("Name");
     private final EmailField emailField = new EmailField("Email");
     private final PasswordField passwordField = new PasswordField("Password");
+
     private final Button saveBtn = new Button("Save user");
 
     private AppUser currentUser = null;

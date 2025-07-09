@@ -1,6 +1,8 @@
 package com.t1tanic.budget.view;
 
 import com.t1tanic.budget.view.category.CategoryView;
+import com.t1tanic.budget.view.expenseitem.ExpenseItemView;
+import com.t1tanic.budget.view.incomeitem.IncomeItemView;
 import com.t1tanic.budget.view.user.AppUserView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.html.H1;
@@ -39,7 +41,13 @@ public class DashboardView extends AppLayout {
         RouterLink categoriesLink = new RouterLink("Categories", CategoryView.class);
         categoriesLink.setHighlightCondition(HighlightConditions.sameLocation());
 
-        Nav nav = new Nav(usersLink, categoriesLink);
+        RouterLink expenseItemsLink = new RouterLink("Expense Items", ExpenseItemView.class);
+        expenseItemsLink.setHighlightCondition(HighlightConditions.sameLocation());
+
+        RouterLink incomeItemsLink = new RouterLink("Income Items", IncomeItemView.class);
+        incomeItemsLink.setHighlightCondition(HighlightConditions.sameLocation());
+
+        Nav nav = new Nav(usersLink, categoriesLink, expenseItemsLink, incomeItemsLink);
         nav.getStyle().set("display", "flex")
                 .set("flex-direction", "column")
                 .set("padding", "1rem");
