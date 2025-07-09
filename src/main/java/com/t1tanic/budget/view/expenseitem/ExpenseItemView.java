@@ -1,5 +1,6 @@
 package com.t1tanic.budget.view.expenseitem;
 
+import com.t1tanic.budget.enums.ExpenseType;
 import com.t1tanic.budget.model.AppUser;
 import com.t1tanic.budget.model.Category;
 import com.t1tanic.budget.model.ExpenseItem;
@@ -13,12 +14,16 @@ import com.t1tanic.budget.view.expenseitem.dialog.InsertExpenseItemDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Route(value = "expenses", layout = DashboardView.class)
@@ -34,7 +39,42 @@ public class ExpenseItemView extends VerticalLayout {
 
         this.expenseItemService = expenseItemService;
 
-        expenseGrid.setColumns("id", "description", "amount", "date", "expenseType");
+        expenseGrid.setColumns("id", "description");
+
+        expenseGrid.addColumn(item -> String.format("$%.2f", item.getAmount()))
+                .setHeader("Amount")
+                .setKey("amount")
+                .setSortable(true);;
+
+        expenseGrid.addComponentColumn(item -> {
+                    ExpenseType type = item.getExpenseType();
+                    if (type == null) return new Span();
+
+                    Icon icon = type.getIcon().create();
+                    icon.setSize("16px");
+                    icon.getStyle().set("paddingRight", "6px");
+
+                    Span label = new Span(type.getDisplayName());
+                    HorizontalLayout layout = new HorizontalLayout(icon, label);
+                    layout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+                    return layout;
+                })
+                .setHeader("Expense Type")
+                .setComparator((a, b) -> {
+                    String aType = a.getExpenseType() != null ? a.getExpenseType().getDisplayName() : "";
+                    String bType = b.getExpenseType() != null ? b.getExpenseType().getDisplayName() : "";
+                    return aType.compareToIgnoreCase(bType);
+                })
+                .setSortable(true);
+
+
+        // Format date as dd/MM/yyyy
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        expenseGrid.addColumn(item -> item.getDate() != null ? item.getDate().format(formatter) : "")
+                .setHeader("Date")
+                .setKey("date")
+                .setSortable(true);
 
         expenseGrid.addComponentColumn(item -> {
             Icon editIcon = VaadinIcon.EDIT.create();

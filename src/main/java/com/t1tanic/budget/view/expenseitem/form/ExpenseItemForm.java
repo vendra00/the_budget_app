@@ -4,6 +4,8 @@ import com.t1tanic.budget.enums.ExpenseType;
 import com.t1tanic.budget.model.AppUser;
 import com.t1tanic.budget.model.Category;
 import com.t1tanic.budget.model.ExpenseItem;
+import com.t1tanic.budget.view.expenseitem.util.ComboBoxUtils;
+import com.t1tanic.budget.view.expenseitem.util.ValidationExpenseUtils;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -19,8 +21,11 @@ import java.util.function.Consumer;
 public class ExpenseItemForm extends VerticalLayout {
 
     private final TextField descriptionField = new TextField("Description");
+
     private final NumberField amountField = new NumberField("Amount");
+
     private final DatePicker dateField = new DatePicker("Date");
+
     private final ComboBox<ExpenseType> expenseTypeCombo = new ComboBox<>("Expense Type");
     private final ComboBox<Category> categoryCombo = new ComboBox<>("Category");
     private final ComboBox<AppUser> userCombo = new ComboBox<>("User");
@@ -31,15 +36,19 @@ public class ExpenseItemForm extends VerticalLayout {
 
     public ExpenseItemForm(List<Category> categories, List<AppUser> users, Consumer<ExpenseItem> onSave, Runnable onCancel) {
 
-        expenseTypeCombo.setItems(ExpenseType.values());
-        categoryCombo.setItems(categories);
-        categoryCombo.setItemLabelGenerator(Category::getName);
-        userCombo.setItems(users);
-        userCombo.setItemLabelGenerator(AppUser::getEmail);
+        ValidationExpenseUtils.markRequired(
+                descriptionField, amountField, dateField,
+                expenseTypeCombo, categoryCombo, userCombo
+        );
+
+        ComboBoxUtils.configureExpenseTypeCombo(expenseTypeCombo);
+        ComboBoxUtils.configureCategoryCombo(categoryCombo, categories);
+        ComboBoxUtils.configureUserCombo(userCombo, users);
 
         saveBtn.addClickListener(e -> {
-            if (descriptionField.isEmpty() || amountField.isEmpty() || dateField.isEmpty()
-                    || expenseTypeCombo.isEmpty() || categoryCombo.isEmpty() || userCombo.isEmpty()) {
+            if (ValidationExpenseUtils.hasEmptyFields(
+                    descriptionField, amountField, dateField,
+                    expenseTypeCombo, categoryCombo, userCombo)) {
                 Notification.show("All fields are required.");
                 return;
             }
@@ -91,4 +100,5 @@ public class ExpenseItemForm extends VerticalLayout {
         userCombo.clear();
         saveBtn.setText("Save expense");
     }
+
 }
