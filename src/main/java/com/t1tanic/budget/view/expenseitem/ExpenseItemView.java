@@ -44,7 +44,7 @@ public class ExpenseItemView extends VerticalLayout {
         expenseGrid.addColumn(item -> String.format("$%.2f", item.getAmount()))
                 .setHeader("Amount")
                 .setKey("amount")
-                .setSortable(true);;
+                .setSortable(true);
 
         expenseGrid.addComponentColumn(item -> {
                     ExpenseType type = item.getExpenseType();
