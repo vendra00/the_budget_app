@@ -18,7 +18,7 @@ public class IncomeItemServiceImpl implements IncomeItemService {
     private final IncomeItemRepository incomeItemRepository;
 
     @Override
-    public IncomeItem createIncomeItem(IncomeItem incomeItem) {
+    public IncomeItem addIncomeItem(IncomeItem incomeItem) {
         log.info("Creating income item: {}", incomeItem);
         return incomeItemRepository.save(incomeItem);
     }
@@ -36,7 +36,7 @@ public class IncomeItemServiceImpl implements IncomeItemService {
     }
 
     @Override
-    public IncomeItem updateIncomeItem(Long id, IncomeItem updatedIncomeItem) {
+    public Optional<IncomeItem> updateIncomeItem(Long id, IncomeItem updatedIncomeItem) {
         log.info("Updating income item with ID: {}", id);
         return incomeItemRepository.findById(id)
                 .map(existing -> {
@@ -46,8 +46,7 @@ public class IncomeItemServiceImpl implements IncomeItemService {
                     existing.setCategory(updatedIncomeItem.getCategory());
                     existing.setUser(updatedIncomeItem.getUser());
                     return incomeItemRepository.save(existing);
-                })
-                .orElseThrow(() -> new IllegalArgumentException("Income item not found with ID: " + id));
+                });
     }
 
     @Override

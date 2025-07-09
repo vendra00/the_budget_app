@@ -73,7 +73,7 @@ public class IncomeItemView extends VerticalLayout {
             List<AppUser> users = appUserService.getAllUsers();
 
             InsertIncomeItemDialog dialog = new InsertIncomeItemDialog(categories, users, newItem -> {
-                incomeItemService.createIncomeItem(newItem);
+                incomeItemService.addIncomeItem(newItem);
                 refreshGrid();
             });
             dialog.open();

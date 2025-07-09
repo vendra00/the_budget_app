@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
@@ -18,16 +19,15 @@ public class ExpenseItemServiceImpl implements ExpenseItemService {
     private final ExpenseItemRepository expenseItemRepository;
 
     @Override
-    public void addExpenseItem(ExpenseItem expenseItem) {
+    public ExpenseItem addExpenseItem(ExpenseItem expenseItem) {
         log.info("Adding new expense item: {}", expenseItem);
-        expenseItemRepository.save(expenseItem);
+        return expenseItemRepository.save(expenseItem);
     }
 
     @Override
-    public ExpenseItem getExpenseItemById(Long id) {
+    public Optional<ExpenseItem> getExpenseItemById(Long id) {
         log.info("Getting expense item with ID: {}", id);
-        return expenseItemRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ExpenseItem not found with ID: " + id));
+        return expenseItemRepository.findById(id);
     }
 
     @Override
@@ -37,16 +37,19 @@ public class ExpenseItemServiceImpl implements ExpenseItemService {
     }
 
     @Override
-    public ExpenseItem updateExpenseItem(Long id, ExpenseItem updatedExpenseItem) {
+    public Optional<ExpenseItem> updateExpenseItem(Long id, ExpenseItem updatedExpenseItem) {
         log.info("Updating expense item with ID: {}", id);
-        ExpenseItem existingItem = getExpenseItemById(id);
-        existingItem.setDescription(updatedExpenseItem.getDescription());
-        existingItem.setAmount(updatedExpenseItem.getAmount());
-        existingItem.setDate(updatedExpenseItem.getDate());
-        existingItem.setCategory(updatedExpenseItem.getCategory());
-        existingItem.setExpenseType(updatedExpenseItem.getExpenseType());
-        existingItem.setUser(updatedExpenseItem.getUser());
-        return expenseItemRepository.save(existingItem);
+
+        return expenseItemRepository.findById(id)
+                .map(existingItem -> {
+                    existingItem.setDescription(updatedExpenseItem.getDescription());
+                    existingItem.setAmount(updatedExpenseItem.getAmount());
+                    existingItem.setDate(updatedExpenseItem.getDate());
+                    existingItem.setCategory(updatedExpenseItem.getCategory());
+                    existingItem.setExpenseType(updatedExpenseItem.getExpenseType());
+                    existingItem.setUser(updatedExpenseItem.getUser());
+                    return expenseItemRepository.save(existingItem);
+                });
     }
 
     @Override
