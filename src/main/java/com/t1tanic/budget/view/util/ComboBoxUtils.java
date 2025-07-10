@@ -1,6 +1,7 @@
-package com.t1tanic.budget.view.expenseitem.util;
+package com.t1tanic.budget.view.util;
 
 import com.t1tanic.budget.enums.ExpenseType;
+import com.t1tanic.budget.enums.IncomeType;
 import com.t1tanic.budget.model.AppUser;
 import com.t1tanic.budget.model.Category;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -22,6 +23,24 @@ public class ComboBoxUtils {
     public static void configureExpenseTypeCombo(ComboBox<ExpenseType> comboBox) {
         List<ExpenseType> sortedTypes = Arrays.stream(ExpenseType.values())
                 .sorted(Comparator.comparing(ExpenseType::getDisplayName))
+                .toList();
+
+        comboBox.setItems(sortedTypes);
+        comboBox.setRenderer(new ComponentRenderer<>(type -> {
+            Icon icon = type.getIcon().create();
+            icon.setSize(ICON_SIZE);
+            icon.getStyle().set("paddingRight", ICON_PADDING);
+
+            Span label = new Span(type.getDisplayName());
+            HorizontalLayout layout = new HorizontalLayout(icon, label);
+            layout.setAlignItems(FlexComponent.Alignment.CENTER);
+            return layout;
+        }));
+    }
+
+    public static void configureIncomeTypeCombo(ComboBox<IncomeType> comboBox) {
+        List<IncomeType> sortedTypes = Arrays.stream(IncomeType.values())
+                .sorted(Comparator.comparing(IncomeType::getDisplayName))
                 .toList();
 
         comboBox.setItems(sortedTypes);

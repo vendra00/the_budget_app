@@ -36,7 +36,6 @@ public class ExpenseItemView extends VerticalLayout {
     public ExpenseItemView(ExpenseItemService expenseItemService,
                            CategoryService categoryService,
                            AppUserService appUserService) {
-
         this.expenseItemService = expenseItemService;
 
         expenseGrid.setColumns("id", "description");
@@ -68,8 +67,6 @@ public class ExpenseItemView extends VerticalLayout {
                 })
                 .setSortable(true);
 
-
-        // Format date as dd/MM/yyyy
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         expenseGrid.addColumn(item -> item.getDate() != null ? item.getDate().format(formatter) : "")
                 .setHeader("Date")

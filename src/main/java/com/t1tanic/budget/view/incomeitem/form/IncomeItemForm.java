@@ -4,6 +4,8 @@ import com.t1tanic.budget.enums.IncomeType;
 import com.t1tanic.budget.model.AppUser;
 import com.t1tanic.budget.model.Category;
 import com.t1tanic.budget.model.IncomeItem;
+import com.t1tanic.budget.view.util.ComboBoxUtils;
+import com.t1tanic.budget.view.util.ValidationExpenseUtils;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -19,8 +21,11 @@ import java.util.function.Consumer;
 public class IncomeItemForm extends VerticalLayout {
 
     private final TextField descriptionField = new TextField("Description");
+
     private final NumberField amountField = new NumberField("Amount");
+
     private final DatePicker dateField = new DatePicker("Date");
+
     private final ComboBox<IncomeType> incomeTypeCombo = new ComboBox<>("Income Type");
     private final ComboBox<Category> categoryCombo = new ComboBox<>("Category");
     private final ComboBox<AppUser> userCombo = new ComboBox<>("User");
@@ -31,15 +36,14 @@ public class IncomeItemForm extends VerticalLayout {
 
     public IncomeItemForm(List<Category> categories, List<AppUser> users, Consumer<IncomeItem> onSave, Runnable onCancel) {
 
-        incomeTypeCombo.setItems(IncomeType.values());
-        categoryCombo.setItems(categories);
-        categoryCombo.setItemLabelGenerator(Category::getName);
-        userCombo.setItems(users);
-        userCombo.setItemLabelGenerator(AppUser::getEmail);
+        ComboBoxUtils.configureIncomeTypeCombo(incomeTypeCombo);
+        ComboBoxUtils.configureCategoryCombo(categoryCombo, categories);
+        ComboBoxUtils.configureUserCombo(userCombo, users);
 
         saveBtn.addClickListener(e -> {
-            if (descriptionField.isEmpty() || amountField.isEmpty() || dateField.isEmpty()
-                    || incomeTypeCombo.isEmpty() || categoryCombo.isEmpty() || userCombo.isEmpty()) {
+            if (ValidationExpenseUtils.hasEmptyFields(
+                    descriptionField, amountField, dateField,
+                    incomeTypeCombo, categoryCombo, userCombo)) {
                 Notification.show("All fields are required.");
                 return;
             }

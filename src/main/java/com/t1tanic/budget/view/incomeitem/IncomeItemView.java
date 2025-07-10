@@ -1,5 +1,6 @@
 package com.t1tanic.budget.view.incomeitem;
 
+import com.t1tanic.budget.enums.IncomeType;
 import com.t1tanic.budget.model.AppUser;
 import com.t1tanic.budget.model.Category;
 import com.t1tanic.budget.model.IncomeItem;
@@ -13,12 +14,16 @@ import com.t1tanic.budget.view.incomeitem.dialog.InsertIncomeItemDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Route(value = "incomes", layout = DashboardView.class)
@@ -28,10 +33,45 @@ public class IncomeItemView extends VerticalLayout {
     private final IncomeItemService incomeItemService;
     private final Grid<IncomeItem> incomeGrid = new Grid<>(IncomeItem.class);
 
-    public IncomeItemView(IncomeItemService incomeItemService, CategoryService categoryService, AppUserService appUserService) {
+    public IncomeItemView(IncomeItemService incomeItemService,
+                          CategoryService categoryService,
+                          AppUserService appUserService) {
         this.incomeItemService = incomeItemService;
 
-        incomeGrid.setColumns("id", "description", "amount", "date", "incomeType");
+        incomeGrid.setColumns("id", "description");
+
+        incomeGrid.addColumn(item -> String.format("$%.2f", item.getAmount()))
+                .setHeader("Amount")
+                .setKey("amount")
+                .setSortable(true);
+
+        incomeGrid.addComponentColumn(item -> {
+                    IncomeType type = item.getIncomeType();
+                    if (type == null) return new Span();
+
+                    Icon icon = type.getIcon().create();
+                    icon.setSize("16px");
+                    icon.getStyle().set("paddingRight", "6px");
+
+                    Span label = new Span(type.getDisplayName());
+                    HorizontalLayout layout = new HorizontalLayout(icon, label);
+                    layout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+                    return layout;
+                })
+                .setHeader("Income Type")
+                .setComparator((a, b) -> {
+                    String aType = a.getIncomeType() != null ? a.getIncomeType().getDisplayName() : "";
+                    String bType = b.getIncomeType() != null ? b.getIncomeType().getDisplayName() : "";
+                    return aType.compareToIgnoreCase(bType);
+                })
+                .setSortable(true);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        incomeGrid.addColumn(item -> item.getDate() != null ? item.getDate().format(formatter) : "")
+                .setHeader("Date")
+                .setKey("date")
+                .setSortable(true);
 
         incomeGrid.addComponentColumn(item -> {
             Icon editIcon = VaadinIcon.EDIT.create();

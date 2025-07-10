@@ -1,4 +1,4 @@
-package com.t1tanic.budget.view.expenseitem.util;
+package com.t1tanic.budget.view.util;
 
 import com.vaadin.flow.component.HasValue;
 
