@@ -36,14 +36,12 @@ public class IncomeItemForm extends VerticalLayout {
 
     public IncomeItemForm(List<Category> categories, List<AppUser> users, Consumer<IncomeItem> onSave, Runnable onCancel) {
 
-        ComboBoxUtils.configureIncomeTypeCombo(incomeTypeCombo);
+        ComboBoxUtils.configureEnumComboWithIcon(incomeTypeCombo, IncomeType.values(), IncomeType::getDisplayName, IncomeType::getIcon);
         ComboBoxUtils.configureCategoryCombo(categoryCombo, categories);
         ComboBoxUtils.configureUserCombo(userCombo, users);
 
         saveBtn.addClickListener(e -> {
-            if (ValidationExpenseUtils.hasEmptyFields(
-                    descriptionField, amountField, dateField,
-                    incomeTypeCombo, categoryCombo, userCombo)) {
+            if (ValidationExpenseUtils.hasEmptyFields(descriptionField, amountField, dateField, incomeTypeCombo, categoryCombo, userCombo)) {
                 Notification.show("All fields are required.");
                 return;
             }

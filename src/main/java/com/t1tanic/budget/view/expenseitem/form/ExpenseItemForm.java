@@ -36,12 +36,9 @@ public class ExpenseItemForm extends VerticalLayout {
 
     public ExpenseItemForm(List<Category> categories, List<AppUser> users, Consumer<ExpenseItem> onSave, Runnable onCancel) {
 
-        ValidationExpenseUtils.markRequired(
-                descriptionField, amountField, dateField,
-                expenseTypeCombo, categoryCombo, userCombo
-        );
+        ValidationExpenseUtils.markRequired(descriptionField, amountField, dateField, expenseTypeCombo, categoryCombo, userCombo);
 
-        ComboBoxUtils.configureExpenseTypeCombo(expenseTypeCombo);
+        ComboBoxUtils.configureEnumComboWithIcon(expenseTypeCombo, ExpenseType.values(), ExpenseType::getDisplayName, ExpenseType::getIcon);
         ComboBoxUtils.configureCategoryCombo(categoryCombo, categories);
         ComboBoxUtils.configureUserCombo(userCombo, users);
 
