@@ -2,6 +2,8 @@ package com.t1tanic.budget.service.impl;
 
 import com.t1tanic.budget.model.Category;
 import com.t1tanic.budget.repository.CategoryRepository;
+import com.t1tanic.budget.repository.ExpenseItemRepository;
+import com.t1tanic.budget.repository.IncomeItemRepository;
 import com.t1tanic.budget.service.CategoryService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,8 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final IncomeItemRepository incomeItemRepository;
+    private final ExpenseItemRepository expenseItemRepository;
 
     @Override
     public void addCategory(Category category) {
@@ -48,10 +52,22 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(Long id) {
         log.info("Deleting category with ID: {}", id);
+
         if (!categoryRepository.existsById(id)) {
             throw new EntityNotFoundException("Category not found with ID: " + id);
         }
+
+        long incomeCount = incomeItemRepository.countByCategoryId(id);
+        long expenseCount = expenseItemRepository.countByCategoryId(id);
+
+        if (incomeCount > 0 || expenseCount > 0) {
+            throw new IllegalStateException("Cannot delete category. It is used by "
+                    + incomeCount + " income items and " + expenseCount + " expense items.");
+        }
+
         categoryRepository.deleteById(id);
         log.info("Deleted category with ID: {}", id);
     }
+
+
 }
